@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>SosoSignal — AI Finance Terminal</title>
+<title>OnchainEdge — AI Finance Terminal</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;600&display=swap" rel="stylesheet"/>
 <style>
 :root{--bg:#050508;--surface:#0c0c13;--surface2:#111119;--border:#1a1a26;--border2:#252535;--text:#c8c8da;--muted:#52526a;--accent:#00e5ff;--green:#00ff9d;--red:#ff3355;--yellow:#ffd600;--purple:#a78bff;--mono:'IBM Plex Mono',monospace;--sans:'Space Grotesk',sans-serif;}
@@ -88,20 +88,19 @@ main{display:grid;grid-template-columns:2fr 1fr;gap:1px;background:var(--border)
 <body>
 
 <header>
-  <div class="logo">SOSO<em>SIGNAL</em></div>
+  <div class="logo">ONCHAIN<em>EDGE</em></div>
   <div class="hright">
     <div class="live"><div class="ldot"></div>LIVE</div>
     <div id="clock">--:--:--</div>
   </div>
 </header>
 
+<input type="hidden" id="groqKey" value="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"/>
+<input type="hidden" id="sosoKey" value="SOSO-94708085278042eabec9158070735b1d"/>
 <div class="apibar">
-  <label>GROQ KEY</label>
-  <input type="password" id="groqKey" placeholder="gsk_..."/>
-  <label>SOSOVALUE KEY</label>
-  <input type="text" id="sosoKey" placeholder="demo"/>
+  <span style="color:var(--muted);font-size:10px;letter-spacing:0.1em;">POWERED BY SOSOVALUE · GROQ AI · COINGECKO</span>
   <button class="btn g" onclick="initDashboard()">▶ LOAD SIGNALS</button>
-  <button class="btn" onclick="clearLog()">CLR</button>
+  <button class="btn" onclick="clearLog()">CLR LOG</button>
 </div>
 
 <div class="ticker-wrap">
@@ -153,7 +152,7 @@ main{display:grid;grid-template-columns:2fr 1fr;gap:1px;background:var(--border)
       <span class="pt">SYSTEM LOG</span>
     </div>
     <div class="log-area" id="logArea">
-      <div class="log-line info">[SOSOSIGNAL v1.0] Initialized. Awaiting API keys.</div>
+      <div class="log-line info">[ONCHAINDGE v1.0] Initialized. Loading data...</div>
     </div>
   </div>
 
@@ -208,11 +207,9 @@ let marketData = {};
 let fearGreedVal = 50;
 let newsCache = [];
 
-// Pre-fill key
 document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('groqKey').value = 'YOUR_GROQ_KEY_HERE';
-  document.getElementById('sosoKey').value = 'demo';
   startClock();
+  initDashboard();
 });
 
 function startClock(){
@@ -239,9 +236,7 @@ function selectAsset(btn, a){
 }
 
 async function initDashboard(){
-  const key = document.getElementById('groqKey').value.trim();
-  if(!key || key === 'YOUR_GROQ_KEY_HERE'){ log('Enter your Groq API key first!', 'err'); return; }
-  log('Starting SosoSignal...', 'info');
+  log('Starting OnchainEdge...', 'info');
   await loadPrices();
   await loadFearGreed();
   loadETFFlows();
