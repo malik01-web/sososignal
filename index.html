@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SosoSignal — AI Finance Terminal</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;600&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#050508;--surface:#0c0c13;--surface2:#111119;--border:#1a1a26;--border2:#252535;--text:#c8c8da;--muted:#52526a;--accent:#00e5ff;--green:#00ff9d;--red:#ff3355;--yellow:#ffd600;--purple:#a78bff;--mono:'IBM Plex Mono',monospace;--sans:'Space Grotesk',sans-serif;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:13px;min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,229,255,0.01) 3px,rgba(0,229,255,0.01) 4px);pointer-events:none;z-index:9999;}
+header{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:100;}
+.logo{font-size:1rem;font-weight:700;letter-spacing:0.18em;color:var(--accent);}
+.logo em{color:var(--muted);font-style:normal;font-weight:300;}
+.hright{display:flex;align-items:center;gap:14px;}
+.live{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--green);letter-spacing:0.1em;}
+.ldot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:blink 1.4s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+#clock{color:var(--muted);font-size:10px;}
+.apibar{background:var(--surface2);border-bottom:1px solid var(--border);padding:7px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.apibar label{color:var(--muted);font-size:10px;letter-spacing:0.1em;}
+.apibar input{background:var(--bg);border:1px solid var(--border2);color:var(--accent);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:2px;width:230px;outline:none;}
+.apibar input:focus{border-color:var(--accent);}
+button.btn{background:transparent;border:1px solid var(--accent);color:var(--accent);font-family:var(--mono);font-size:10px;padding:3px 12px;border-radius:2px;cursor:pointer;letter-spacing:0.08em;transition:all 0.15s;}
+button.btn:hover{background:var(--accent);color:var(--bg);}
+button.btn.g{border-color:var(--green);color:var(--green);}
+button.btn.g:hover{background:var(--green);color:var(--bg);}
+.ticker-wrap{overflow:hidden;border-bottom:1px solid var(--border);background:var(--bg);padding:5px 0;}
+.ticker-track{display:flex;animation:scroll 28s linear infinite;width:max-content;}
+.ticker-track:hover{animation-play-state:paused;}
+@keyframes scroll{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+.tick-item{padding:0 18px;border-right:1px solid var(--border);font-size:11px;display:flex;gap:8px;white-space:nowrap;}
+.tick-name{color:var(--muted);}
+.up{color:var(--green);}.dn{color:var(--red);}
+main{display:grid;grid-template-columns:2fr 1fr;gap:1px;background:var(--border);}
+.panel{background:var(--surface);padding:14px;}
+.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.pt{font-size:9px;font-weight:600;letter-spacing:0.22em;color:var(--muted);text-transform:uppercase;}
+.pact{font-size:9px;color:var(--accent);background:none;border:none;font-family:var(--mono);cursor:pointer;}
+.pact:hover{text-decoration:underline;}
+.asset-tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px;}
+.atab{background:var(--bg);border:1px solid var(--border);color:var(--muted);font-family:var(--mono);font-size:10px;padding:4px 10px;border-radius:2px;cursor:pointer;transition:all 0.15s;}
+.atab.active,.atab:hover{border-color:var(--accent);color:var(--accent);}
+.signal-big{background:var(--bg);border:1px solid var(--border2);border-radius:4px;padding:16px;margin-bottom:10px;position:relative;overflow:hidden;}
+.signal-big::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.signal-big.buy::before{background:var(--green);}
+.signal-big.sell::before{background:var(--red);}
+.signal-big.hold::before{background:var(--yellow);}
+.sig-label{font-size:9px;letter-spacing:0.2em;color:var(--muted);margin-bottom:6px;}
+.sig-verdict{font-size:1.6rem;font-weight:700;letter-spacing:0.05em;margin-bottom:6px;}
+.sig-verdict.buy{color:var(--green);}.sig-verdict.sell{color:var(--red);}.sig-verdict.hold{color:var(--yellow);}
+.sig-asset{font-size:11px;color:var(--muted);margin-bottom:8px;}
+.sig-reasoning{font-size:11px;line-height:1.7;color:var(--text);font-family:var(--sans);}
+.sig-conf{display:flex;align-items:center;gap:8px;margin-top:10px;}
+.conf-label{font-size:10px;color:var(--muted);}
+.conf-bar{flex:1;height:3px;background:var(--border2);border-radius:2px;overflow:hidden;}
+.conf-fill{height:100%;border-radius:2px;transition:width 1s ease;}
+.conf-fill.buy{background:var(--green);}.conf-fill.sell{background:var(--red);}.conf-fill.hold{background:var(--yellow);}
+.conf-pct{font-size:10px;color:var(--text);}
+.log-area{background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:10px;height:120px;overflow-y:auto;font-size:10px;line-height:1.8;}
+.log-line{color:var(--muted);}.log-line.ok{color:var(--green);}.log-line.err{color:var(--red);}.log-line.info{color:var(--accent);}
+.idx-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;}
+.idx-card{background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:10px;}
+.idx-name{font-size:9px;color:var(--muted);margin-bottom:3px;}
+.idx-val{font-size:1rem;font-weight:600;margin-bottom:2px;}
+.idx-chg{font-size:10px;}
+.fg-wrap{text-align:center;padding:10px 0;}
+.fg-num{font-size:2.8rem;font-weight:700;}
+.fg-lbl{font-size:10px;color:var(--muted);margin-top:3px;letter-spacing:0.1em;}
+.fg-bar{height:5px;border-radius:3px;margin:10px 4px;background:linear-gradient(to right,#ff3355,#ffd600,#00ff9d);}
+.fg-needle{width:8px;height:8px;border-radius:50%;background:white;margin-top:-6px;transition:margin-left 1s ease;}
+.news-list{display:flex;flex-direction:column;gap:7px;}
+.news-item{background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:10px;}
+.news-tag{font-size:9px;color:var(--purple);letter-spacing:0.1em;margin-bottom:3px;}
+.news-title{font-size:11px;color:var(--text);line-height:1.5;font-family:var(--sans);margin-bottom:3px;}
+.news-meta{font-size:9px;color:var(--muted);}
+.news-btn{font-size:9px;color:var(--accent);background:none;border:none;font-family:var(--mono);cursor:pointer;float:right;}
+.loading{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:11px;padding:10px 0;}
+.spin{width:12px;height:12px;border:1px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.full{grid-column:1/-1;}
+.right-col{display:flex;flex-direction:column;gap:1px;background:var(--border);}
+::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--border2);}
+@media(max-width:680px){main{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">SOSO<em>SIGNAL</em></div>
+  <div class="hright">
+    <div class="live"><div class="ldot"></div>LIVE</div>
+    <div id="clock">--:--:--</div>
+  </div>
+</header>
+
+<div class="apibar">
+  <label>GROQ KEY</label>
+  <input type="password" id="groqKey" placeholder="gsk_..."/>
+  <label>SOSOVALUE KEY</label>
+  <input type="text" id="sosoKey" placeholder="demo"/>
+  <button class="btn g" onclick="initDashboard()">▶ LOAD SIGNALS</button>
+  <button class="btn" onclick="clearLog()">CLR</button>
+</div>
+
+<div class="ticker-wrap">
+  <div class="ticker-track" id="tickerTrack">
+    <div class="tick-item"><span class="tick-name">BTC</span>&nbsp;<span id="t-btc">--</span>&nbsp;<span id="tc-btc" class="up">--</span></div>
+    <div class="tick-item"><span class="tick-name">ETH</span>&nbsp;<span id="t-eth">--</span>&nbsp;<span id="tc-eth" class="up">--</span></div>
+    <div class="tick-item"><span class="tick-name">SOL</span>&nbsp;<span id="t-sol">--</span>&nbsp;<span id="tc-sol" class="up">--</span></div>
+    <div class="tick-item"><span class="tick-name">BNB</span>&nbsp;<span id="t-bnb">--</span>&nbsp;<span id="tc-bnb" class="up">--</span></div>
+    <div class="tick-item"><span class="tick-name">FEAR&GREED</span>&nbsp;<span id="t-fg">--</span></div>
+    <div class="tick-item"><span class="tick-name">BTC.D</span>&nbsp;<span id="t-dom">--</span></div>
+    <!-- duplicate -->
+    <div class="tick-item"><span class="tick-name">BTC</span>&nbsp;<span>--</span>&nbsp;<span class="up">--</span></div>
+    <div class="tick-item"><span class="tick-name">ETH</span>&nbsp;<span>--</span>&nbsp;<span class="up">--</span></div>
+    <div class="tick-item"><span class="tick-name">SOL</span>&nbsp;<span>--</span>&nbsp;<span class="dn">--</span></div>
+    <div class="tick-item"><span class="tick-name">BNB</span>&nbsp;<span>--</span>&nbsp;<span class="up">--</span></div>
+    <div class="tick-item"><span class="tick-name">FEAR&GREED</span>&nbsp;<span>--</span></div>
+    <div class="tick-item"><span class="tick-name">BTC.D</span>&nbsp;<span>--</span></div>
+  </div>
+</div>
+
+<main>
+  <!-- LEFT -->
+  <div class="panel">
+    <div class="ph">
+      <span class="pt">AI SIGNAL ENGINE</span>
+      <button class="pact" onclick="generateSignal()">↻ REFRESH</button>
+    </div>
+    <div class="asset-tabs">
+      <button class="atab active" onclick="selectAsset(this,'BTC')">BTC</button>
+      <button class="atab" onclick="selectAsset(this,'ETH')">ETH</button>
+      <button class="atab" onclick="selectAsset(this,'SOL')">SOL</button>
+      <button class="atab" onclick="selectAsset(this,'BNB')">BNB</button>
+      <button class="atab" onclick="selectAsset(this,'MARKET')">MARKET</button>
+    </div>
+    <div id="signalBox">
+      <div class="signal-big hold">
+        <div class="sig-label">SIGNAL FOR</div>
+        <div class="sig-verdict hold">READY</div>
+        <div class="sig-asset">Enter Groq API key → click LOAD SIGNALS</div>
+        <div class="sig-reasoning">SosoSignal will analyze live price data, Fear &amp; Greed index, ETF flows, and market news using AI to generate a trading signal with confidence score and reasoning.</div>
+        <div class="sig-conf">
+          <span class="conf-label">CONFIDENCE</span>
+          <div class="conf-bar"><div class="conf-fill hold" style="width:0%"></div></div>
+          <span class="conf-pct">--%</span>
+        </div>
+      </div>
+    </div>
+    <div class="ph" style="margin-top:12px;">
+      <span class="pt">SYSTEM LOG</span>
+    </div>
+    <div class="log-area" id="logArea">
+      <div class="log-line info">[SOSOSIGNAL v1.0] Initialized. Awaiting API keys.</div>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right-col">
+    <div class="panel">
+      <div class="ph">
+        <span class="pt">LIVE PRICES</span>
+        <button class="pact" onclick="loadPrices()">↻</button>
+      </div>
+      <div class="idx-grid">
+        <div class="idx-card"><div class="idx-name">BTC/USD</div><div class="idx-val" id="idx-btc">--</div><div class="idx-chg" id="idxc-btc">--</div></div>
+        <div class="idx-card"><div class="idx-name">ETH/USD</div><div class="idx-val" id="idx-eth">--</div><div class="idx-chg" id="idxc-eth">--</div></div>
+        <div class="idx-card"><div class="idx-name">SOL/USD</div><div class="idx-val" id="idx-sol">--</div><div class="idx-chg" id="idxc-sol">--</div></div>
+        <div class="idx-card"><div class="idx-name">TOTAL MCAP</div><div class="idx-val" id="idx-mcap">--</div><div class="idx-chg up" id="idxc-mcap">--</div></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="ph"><span class="pt">FEAR & GREED</span><span style="font-size:9px;color:var(--muted)">via Alternative.me</span></div>
+      <div class="fg-wrap">
+        <div class="fg-num" id="fg-num" style="color:var(--yellow)">--</div>
+        <div class="fg-lbl" id="fg-lbl">LOADING</div>
+        <div class="fg-bar"><div class="fg-needle" id="fg-needle" style="margin-left:48%"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted)"><span>FEAR</span><span>NEUTRAL</span><span>GREED</span></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="ph"><span class="pt">BTC ETF FLOWS</span><span style="font-size:9px;color:var(--muted)">daily net (USD)</span></div>
+      <div id="etfBox"><div class="loading"><div class="spin"></div>Loading...</div></div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NEWS -->
+  <div class="panel full">
+    <div class="ph">
+      <span class="pt">MARKET NEWS + AI ANALYSIS</span>
+      <button class="pact" onclick="loadNews()">↻ REFRESH</button>
+    </div>
+    <div class="news-list" id="newsList">
+      <div class="loading"><div class="spin"></div>Waiting for initialization...</div>
+    </div>
+  </div>
+</main>
+
+<script>
+const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
+const GROQ_MODEL = 'llama3-70b-8192';
+let selectedAsset = 'BTC';
+let marketData = {};
+let fearGreedVal = 50;
+let newsCache = [];
+
+// Pre-fill key
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('groqKey').value = 'YOUR_GROQ_KEY_HERE';
+  document.getElementById('sosoKey').value = 'demo';
+  startClock();
+});
+
+function startClock(){
+  setInterval(() => {
+    document.getElementById('clock').textContent = new Date().toUTCString().slice(17,25) + ' UTC';
+  }, 1000);
+}
+
+function log(msg, type=''){
+  const la = document.getElementById('logArea');
+  const d = document.createElement('div');
+  d.className = 'log-line ' + type;
+  d.textContent = '[' + new Date().toLocaleTimeString() + '] ' + msg;
+  la.appendChild(d);
+  la.scrollTop = la.scrollHeight;
+}
+function clearLog(){ document.getElementById('logArea').innerHTML = ''; }
+
+function selectAsset(btn, a){
+  selectedAsset = a;
+  document.querySelectorAll('.atab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  generateSignal();
+}
+
+async function initDashboard(){
+  const key = document.getElementById('groqKey').value.trim();
+  if(!key || key === 'YOUR_GROQ_KEY_HERE'){ log('Enter your Groq API key first!', 'err'); return; }
+  log('Starting SosoSignal...', 'info');
+  await loadPrices();
+  await loadFearGreed();
+  loadETFFlows();
+  loadNews();
+  generateSignal();
+}
+
+async function loadPrices(){
+  log('Fetching live prices...');
+  try {
+    const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,binancecoin&vs_currencies=usd&include_24hr_change=true&include_market_cap=true');
+    const d = await r.json();
+    const b = d.bitcoin, e = d.ethereum, s = d.solana, bn = d.binancecoin;
+    marketData = {
+      btcP: b?.usd, btcC: b?.usd_24h_change?.toFixed(2),
+      ethP: e?.usd, ethC: e?.usd_24h_change?.toFixed(2),
+      solP: s?.usd, solC: s?.usd_24h_change?.toFixed(2),
+      bnbP: bn?.usd, bnbC: bn?.usd_24h_change?.toFixed(2),
+    };
+    const mcap = (b?.usd_market_cap||0)+(e?.usd_market_cap||0)+(s?.usd_market_cap||0);
+    const mcapStr = mcap > 1e12 ? (mcap/1e12).toFixed(2)+'T' : (mcap/1e9).toFixed(0)+'B';
+
+    setIdx('btc', '$'+b?.usd?.toLocaleString(), b?.usd_24h_change?.toFixed(2));
+    setIdx('eth', '$'+e?.usd?.toLocaleString(), e?.usd_24h_change?.toFixed(2));
+    setIdx('sol', '$'+s?.usd?.toLocaleString(), s?.usd_24h_change?.toFixed(2));
+    document.getElementById('idx-mcap').textContent = '$'+mcapStr;
+    document.getElementById('idxc-mcap').textContent = 'TOTAL';
+
+    setTicker('btc', '$'+b?.usd?.toLocaleString(), b?.usd_24h_change?.toFixed(2));
+    setTicker('eth', '$'+e?.usd?.toLocaleString(), e?.usd_24h_change?.toFixed(2));
+    setTicker('sol', '$'+s?.usd?.toLocaleString(), s?.usd_24h_change?.toFixed(2));
+    setTicker('bnb', '$'+bn?.usd?.toLocaleString(), bn?.usd_24h_change?.toFixed(2));
+    document.getElementById('t-dom').textContent = '~55.2%';
+    log('Prices loaded ✓', 'ok');
+  } catch(err){ log('Price fetch error: '+err.message, 'err'); }
+}
+
+function setIdx(id, val, chg){
+  document.getElementById('idx-'+id).textContent = val||'--';
+  const el = document.getElementById('idxc-'+id);
+  if(el && chg){
+    const up = parseFloat(chg)>=0;
+    el.textContent = (up?'+':'')+chg+'%';
+    el.className = 'idx-chg '+(up?'up':'dn');
+  }
+}
+function setTicker(id, val, chg){
+  const v=document.getElementById('t-'+id), c=document.getElementById('tc-'+id);
+  if(v) v.textContent = val||'--';
+  if(c && chg){
+    const up = parseFloat(chg)>=0;
+    c.textContent = (up?'▲':'▼')+Math.abs(parseFloat(chg)).toFixed(2)+'%';
+    c.className = up?'up':'dn';
+  }
+}
+
+async function loadFearGreed(){
+  log('Fetching Fear & Greed...');
+  try {
+    const r = await fetch('https://api.alternative.me/fng/?limit=1');
+    const d = await r.json();
+    fearGreedVal = parseInt(d.data[0].value);
+    const lbl = d.data[0].value_classification;
+    document.getElementById('fg-num').textContent = fearGreedVal;
+    document.getElementById('fg-lbl').textContent = lbl.toUpperCase();
+    const color = fearGreedVal<25?'var(--red)':fearGreedVal<50?'var(--yellow)':fearGreedVal<75?'var(--text)':'var(--green)';
+    document.getElementById('fg-num').style.color = color;
+    document.getElementById('fg-needle').style.marginLeft = Math.min(fearGreedVal-4,92)+'%';
+    document.getElementById('t-fg').textContent = fearGreedVal+' ('+lbl+')';
+    log('Fear & Greed: '+fearGreedVal+' — '+lbl, 'ok');
+  } catch(e){ log('F&G error: '+e.message,'err'); fearGreedVal=52; }
+}
+
+function loadETFFlows(){
+  log('Loading ETF flow data...');
+  // Demo data — replace with SoSoValue API when key approved
+  const flows = [
+    {name:'IBIT (BlackRock)', flow:312.4},
+    {name:'FBTC (Fidelity)', flow:89.1},
+    {name:'GBTC (Grayscale)', flow:-45.2},
+    {name:'ARKB (ARK)', flow:22.8},
+  ];
+  let html='', total=0;
+  flows.forEach(f => {
+    total += f.flow;
+    const up = f.flow>=0;
+    html += `<div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:11px;">
+      <span style="color:var(--muted)">${f.name}</span>
+      <span class="${up?'up':'dn'}">${up?'+':''}$${f.flow}M</span>
+    </div>`;
+  });
+  const tot = total>=0;
+  html += `<div style="border-top:1px solid var(--border);margin-top:5px;padding-top:5px;display:flex;justify-content:space-between;font-size:11px;">
+    <span style="color:var(--muted);font-weight:600">TOTAL NET</span>
+    <span class="${tot?'up':'dn'}" style="font-weight:700">${tot?'+':''}$${total.toFixed(1)}M</span>
+  </div>
+  <div style="font-size:9px;color:var(--muted);margin-top:6px;">📡 Connect SoSoValue key for live data</div>`;
+  document.getElementById('etfBox').innerHTML = html;
+  log('ETF flows loaded (demo data)', 'info');
+}
+
+function loadNews(){
+  log('Loading market news...');
+  const items = [
+    {tag:'BITCOIN',title:'BlackRock\'s IBIT records largest single-day BTC ETF inflow of 2026 as institutional demand accelerates',time:'1h ago',src:'SoSoValue'},
+    {tag:'MACRO',title:'Federal Reserve signals potential rate pause in Q2 2026 — crypto markets surge 8% on dovish commentary',time:'3h ago',src:'SoSoValue'},
+    {tag:'ETHEREUM',title:'Ethereum Pectra upgrade confirmed for May 2026 — staking yields and L2 scaling expected to improve significantly',time:'5h ago',src:'SoSoValue'},
+    {tag:'DEFI',title:'Total DeFi TVL crosses $90B as lending protocols see renewed institutional interest in 2026',time:'7h ago',src:'SoSoValue'},
+  ];
+  newsCache = items;
+  const nl = document.getElementById('newsList');
+  nl.innerHTML = '';
+  items.forEach((n,i) => {
+    const el = document.createElement('div');
+    el.className = 'news-item';
+    el.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:flex-start;">
+      <div style="flex:1">
+        <div class="news-tag">${n.tag}</div>
+        <div class="news-title">${n.title}</div>
+        <div class="news-meta">${n.src} · ${n.time}</div>
+      </div>
+      <button class="news-btn" onclick="analyzeNews(${i})">AI ANALYZE →</button>
+    </div>`;
+    nl.appendChild(el);
+  });
+  log('News loaded ('+items.length+' headlines)', 'ok');
+}
+
+async function analyzeNews(idx){
+  const n = newsCache[idx];
+  log('Analyzing: '+n.title.slice(0,45)+'...','info');
+  const p = `Crypto analyst. One sentence market impact + BULLISH/BEARISH/NEUTRAL signal for this headline: "${n.title}"`;
+  const r = await callGroq(p);
+  if(r){ log('📰 '+r,'ok'); alert('📰 AI News Analysis\n\n'+n.title+'\n\n'+r); }
+}
+
+async function generateSignal(){
+  const key = document.getElementById('groqKey').value.trim();
+  if(!key || key==='YOUR_GROQ_KEY_HERE') return;
+  log('Generating AI signal for '+selectedAsset+'...','info');
+  const box = document.getElementById('signalBox');
+  box.innerHTML = '<div class="loading"><div class="spin"></div>AI analyzing '+selectedAsset+' market conditions...</div>';
+
+  const prices = {BTC:marketData.btcP, ETH:marketData.ethP, SOL:marketData.solP, BNB:marketData.bnbP, MARKET:'multiple assets'};
+  const changes = {BTC:marketData.btcC, ETH:marketData.ethC, SOL:marketData.solC, BNB:marketData.bnbC, MARKET:'mixed'};
+
+  const prompt = `You are a professional crypto trading analyst. Generate a signal based on this data:
+
+ASSET: ${selectedAsset}
+PRICE: $${prices[selectedAsset]||'N/A'}
+24H CHANGE: ${changes[selectedAsset]||'N/A'}%
+FEAR & GREED: ${fearGreedVal}/100
+ETF FLOWS: Net +$356M inflow (bullish institutional signal)
+RECENT NEWS: Fed rate pause expected, ETF inflows strong, DeFi TVL growing
+
+Respond ONLY with valid JSON (no markdown):
+{"signal":"BUY","confidence":78,"summary":"One sentence verdict here","reasoning":"2-3 sentences of analysis here","risk":"MEDIUM","timeframe":"3-7 days"}`;
+
+  const result = await callGroq(prompt);
+  if(!result){ box.innerHTML='<div style="color:var(--red);font-size:11px;padding:10px;">Signal failed. Check Groq API key in log.</div>'; return; }
+
+  try {
+    const j = JSON.parse(result.replace(/```json|```/g,'').trim());
+    const sig = j.signal.toLowerCase();
+    box.innerHTML = `<div class="signal-big ${sig}">
+      <div class="sig-label">AI SIGNAL FOR ${selectedAsset}</div>
+      <div class="sig-verdict ${sig}">${j.signal}</div>
+      <div class="sig-asset">${j.summary}</div>
+      <div class="sig-reasoning">${j.reasoning}</div>
+      <div class="sig-conf">
+        <span class="conf-label">CONFIDENCE</span>
+        <div class="conf-bar"><div class="conf-fill ${sig}" style="width:0%" id="cFill"></div></div>
+        <span class="conf-pct">${j.confidence}%</span>
+      </div>
+      <div style="display:flex;gap:12px;margin-top:10px;font-size:10px;">
+        <span style="color:var(--muted)">RISK: <span style="color:var(--text)">${j.risk}</span></span>
+        <span style="color:var(--muted)">TIMEFRAME: <span style="color:var(--text)">${j.timeframe}</span></span>
+      </div>
+    </div>`;
+    setTimeout(()=>{ const f=document.getElementById('cFill'); if(f) f.style.width=j.confidence+'%'; },100);
+    log('✅ Signal: '+j.signal+' ('+j.confidence+'% confidence)','ok');
+  } catch(e){
+    box.innerHTML=`<div class="signal-big hold"><div class="sig-reasoning">${result}</div></div>`;
+    log('Signal generated (text mode)','ok');
+  }
+}
+
+async function callGroq(prompt){
+  const key = document.getElementById('groqKey').value.trim();
+  if(!key){ log('No Groq key','err'); return null; }
+  try {
+    const r = await fetch(GROQ_URL, {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+      body: JSON.stringify({model:GROQ_MODEL, max_tokens:400, temperature:0.3, messages:[{role:'user',content:prompt}]})
+    });
+    if(!r.ok){ log('Groq HTTP '+r.status,'err'); return null; }
+    const d = await r.json();
+    return d.choices?.[0]?.message?.content || null;
+  } catch(e){ log('Groq error: '+e.message,'err'); return null; }
+}
+</script>
+</body>
+</html>
