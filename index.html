@@ -1,9 +1,4 @@
-
-import os
-
-output_path = '/mnt/agents/output/index.html'
-
-html = r'''<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -161,6 +156,66 @@ body{font-family:var(--fs);background:var(--bg);color:var(--t);min-height:100vh;
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--card);border:1px solid var(--b);border-radius:8px;padding:12px 20px;font-family:var(--fm);font-size:11px;color:var(--t);z-index:1000;opacity:0;transition:all .3s ease;box-shadow:0 4px 20px rgba(0,0,0,.5)}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 .toast.ok{border-color:var(--g)}.toast.er{border-color:var(--r)}
+
+/* TREASURY */
+.treas-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.treas-card{background:var(--card);border:1px solid var(--b);border-radius:12px;padding:14px 12px}
+.treas-l{font-family:var(--fm);font-size:10px;color:var(--t3);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+.treas-v{font-family:var(--fm);font-size:28px;font-weight:700;color:var(--c)}
+.treas-sub{font-size:10px;color:var(--t3);margin-top:2px}
+.treas-list{margin-top:12px}
+.treas-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--b)}
+.treas-item:last-child{border-bottom:none}
+.treas-name{font-size:13px;color:var(--t2)}
+.treas-amt{font-family:var(--fm);font-size:13px;color:var(--t)}
+.treas-link{display:block;text-align:center;padding:12px;color:var(--c);font-family:var(--fm);font-size:11px;text-decoration:underline;cursor:pointer}
+
+/* CRYPTO STOCKS */
+.stock-item{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--b)}
+.stock-item:last-child{border-bottom:none}
+.stock-info{display:flex;flex-direction:column;gap:2px}
+.stock-tick{font-family:var(--fm);font-size:14px;font-weight:600;color:var(--c)}
+.stock-ex{font-size:10px;color:var(--t3)}
+.stock-price{text-align:right}
+.stock-p{font-family:var(--fm);font-size:16px;font-weight:600;color:var(--t)}
+.stock-ch{font-family:var(--fm);font-size:12px;margin-top:2px}
+
+/* SODEX MARKETS */
+.sodex-item{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--b)}
+.sodex-item:last-child{border-bottom:none}
+.sodex-pair{font-family:var(--fm);font-size:14px;font-weight:600;color:var(--t)}
+.sodex-vol{font-size:10px;color:var(--t3);margin-top:2px}
+.sodex-price{text-align:right}
+.sodex-p{font-family:var(--fm);font-size:18px;font-weight:700;color:var(--t)}
+.sodex-ch{font-family:var(--fm);font-size:13px;margin-top:2px}
+.sodex-link{display:block;text-align:center;padding:14px;margin-top:8px;background:var(--cd);border:1px solid var(--c);border-radius:8px;color:var(--c);font-family:var(--fm);font-size:12px;font-weight:600;text-decoration:none;letter-spacing:1px;cursor:pointer;transition:all .2s ease}
+.sodex-link:hover{background:var(--c);color:var(--bg)}
+
+/* AI CHAT */
+.chat-box{background:var(--card);border:1px solid var(--b);border-radius:12px;padding:16px;margin-bottom:12px}
+.chat-header{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--b)}
+.chat-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--c),var(--p));display:flex;align-items:center;justify-content:center;font-family:var(--fm);font-size:14px;font-weight:700;color:#fff}
+.chat-title{font-size:14px;font-weight:600;color:var(--t)}
+.chat-sub{font-size:10px;color:var(--t3)}
+.chat-messages{max-height:300px;overflow-y:auto;margin-bottom:12px}
+.chat-msg{margin-bottom:10px;padding:10px 12px;border-radius:8px;font-size:12px;line-height:1.6;max-width:85%}
+.chat-msg.ai{background:var(--bg2);border-left:2px solid var(--c);color:var(--t2);margin-right:auto}
+.chat-msg.user{background:var(--cd);color:var(--c);margin-left:auto;text-align:right}
+.chat-input{display:flex;gap:8px}
+.chat-input input{flex:1;background:var(--bg2);border:1px solid var(--b);border-radius:8px;padding:10px 12px;color:var(--t);font-family:var(--fs);font-size:13px;outline:none}
+.chat-input input:focus{border-color:var(--c)}
+.chat-input button{padding:10px 16px;background:var(--c);border:none;border-radius:8px;color:var(--bg);font-family:var(--fm);font-size:12px;font-weight:600;cursor:pointer;transition:opacity .2s ease}
+.chat-input button:hover{opacity:.8}
+.chat-input button:disabled{opacity:.4;cursor:not-allowed}
+
+/* TRADE LINKS */
+.trade-links{display:flex;gap:10px;margin-top:12px}
+.trade-link{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;border-radius:8px;font-family:var(--fm);font-size:11px;font-weight:600;text-decoration:none;letter-spacing:.5px;transition:all .2s ease}
+.trade-link.sodex{background:var(--pd);border:1px solid var(--p);color:var(--p)}
+.trade-link.sodex:hover{background:var(--p);color:#fff}
+.trade-link.soso{background:var(--cd);border:1px solid var(--c);color:var(--c)}
+.trade-link.soso:hover{background:var(--c);color:var(--bg)}
+
 @media(min-width:768px){.wrap{max-width:640px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
@@ -188,9 +243,12 @@ body{font-family:var(--fs);background:var(--bg);color:var(--t);min-height:100vh;
 </header>
 
 <div class="wrap">
+
+<!-- LIVE PRICES -->
 <div class="sec-h"><span class="sec-t">LIVE PRICES</span><button class="sec-a" onclick="refreshAll()">REFRESH</button></div>
 <div class="grid" id="priceGrid"></div>
 
+<!-- FEAR & GREED -->
 <div class="sec-h"><span class="sec-t">FEAR &amp; GREED</span><span style="font-size:10px;color:var(--t3);font-family:var(--fm)">Alternative.me</span></div>
 <div class="card">
 <div class="fgc">
@@ -202,12 +260,33 @@ body{font-family:var(--fs);background:var(--bg);color:var(--t);min-height:100vh;
 </div>
 </div>
 
+<!-- BTC ETF FLOWS -->
 <div class="sec-h"><span class="sec-t">BTC ETF FLOWS</span><span style="font-size:10px;color:var(--t3);font-family:var(--fm)">Daily Net</span></div>
 <div class="card">
 <div class="etfl" id="etfList"></div>
 <div class="ts" id="etfTs"><span class="td f"></span>Source: SoSoValue API</div>
 </div>
 
+<!-- BITCOIN TREASURY -->
+<div class="sec-h"><span class="sec-t">BITCOIN TREASURY</span><span style="font-size:10px;color:var(--t3);font-family:var(--fm)">corporate holdings</span></div>
+<div class="card">
+<div class="treas-grid" id="treasGrid"></div>
+<div class="treas-list" id="treasList"></div>
+<a href="https://sosovalue.com/assets/btc-treasury" target="_blank" class="treas-link">Full Data on SoSoValue &#8594;</a>
+</div>
+
+<!-- CRYPTO STOCKS -->
+<div class="sec-h"><span class="sec-t">CRYPTO STOCKS</span><span style="font-size:10px;color:var(--g);font-family:var(--fm)">live &#183; SoSoValue</span></div>
+<div class="card" id="stockCard"></div>
+
+<!-- SODEX LIVE MARKETS -->
+<div class="sec-h"><span class="sec-t">SODEX LIVE MARKETS</span><button class="sec-a" onclick="refreshSodex()">REFRESH</button></div>
+<div class="card">
+<div id="sodexList"></div>
+<a href="https://sodex.io/trade" target="_blank" class="sodex-link">Trade on SoDEX &#8594;</a>
+</div>
+
+<!-- AI SIGNAL ENGINE -->
 <div class="sec-h"><span class="sec-t">AI SIGNAL ENGINE</span><button class="sec-a" onclick="genSignal()">REFRESH</button></div>
 <div class="tabs" id="tabs">
 <button class="tab on" data-a="BTC" onclick="switchA('BTC')">BTC</button>
@@ -238,8 +317,13 @@ body{font-family:var(--fs);background:var(--bg);color:var(--t);min-height:100vh;
 <div class="meta-i"><span class="meta-l">Timeframe</span><span class="meta-v" id="sigTime">--</span></div>
 <div class="meta-i"><span class="meta-l">Generated</span><span class="meta-v" id="sigGen">--</span></div>
 </div>
+<div class="trade-links">
+<a href="https://sodex.io/trade" target="_blank" class="trade-link sodex">Trade on SoDEX</a>
+<a href="https://sosovalue.com" target="_blank" class="trade-link soso">SoSoValue Data</a>
+</div>
 </div>
 
+<!-- SIGNAL HISTORY -->
 <div class="sec-h"><span class="sec-t">SIGNAL HISTORY</span></div>
 <div class="card">
 <table class="hist-t">
@@ -249,23 +333,46 @@ body{font-family:var(--fs);background:var(--bg);color:var(--t);min-height:100vh;
 <div class="hist-note" id="histNote">Signal history tracking begins now. No backdated or simulated results.</div>
 </div>
 
+<!-- SSI INDEXES -->
 <div class="sec-h"><span class="sec-t">SSI INDEXES &#183; SOSOVALUE</span><span style="font-size:10px;color:var(--y);font-family:var(--fm)">VIEW ALL &#8594;</span></div>
 <div id="ssiWrap"></div>
 
+<!-- LIVE AI CHAT -->
+<div class="sec-h"><span class="sec-t">LIVE AI CHAT</span><span style="font-size:10px;color:var(--g);font-family:var(--fm)">Ask anything</span></div>
+<div class="chat-box">
+<div class="chat-header">
+<div class="chat-avatar">AI</div>
+<div>
+<div class="chat-title">OnchainEdge Assistant</div>
+<div class="chat-sub">Powered by Groq AI</div>
+</div>
+</div>
+<div class="chat-messages" id="chatMessages">
+<div class="chat-msg ai">Welcome to OnchainEdge! Ask me about market signals, BTC trends, or ETF flows. I analyze real-time data from SoSoValue and SoDEX.</div>
+</div>
+<div class="chat-input">
+<input type="text" id="chatInput" placeholder="Ask about BTC, ETH, market sentiment..." onkeypress="if(event.key==='Enter')sendChat()">
+<button onclick="sendChat()" id="chatBtn">Send</button>
+</div>
+</div>
+
+<!-- LIVE CRYPTO NEWS -->
 <div class="sec-h"><span class="sec-t">LIVE CRYPTO NEWS + AI ANALYSIS</span><button class="sec-a" onclick="refreshNews()">REFRESH</button></div>
 <div id="newsWrap"></div>
 
+<!-- SYSTEM LOG -->
 <div class="sec-h"><span class="sec-t">SYSTEM LOG</span><button class="sec-a log-clb" onclick="clearLog()">CLR</button></div>
 <div class="sys-log" id="sysLog">
 <div class="log-e"><span class="log-tm">[INIT]</span><span class="log-ms inf">OnchainEdge terminal initialized. Waiting for API connections...</span></div>
 </div>
 
+<!-- FOOTER -->
 <div class="foot">
 <div class="foot-t">ONCHAINEDGE &#183; BUILT FOR SOSOVALUE BUILDATHON</div>
 <div class="foot-l">
-<a href="#" class="foot-a">GitHub</a>
+<a href="https://github.com/malik01-web/sososignal" target="_blank" class="foot-a">GitHub</a>
 <a href="#" class="foot-a">Docs</a>
-<a href="#" class="foot-a">SoSoValue</a>
+<a href="https://sosovalue.com" target="_blank" class="foot-a">SoSoValue</a>
 </div>
 </div>
 </div>
@@ -273,15 +380,12 @@ body{font-family:var(--fs);background:var(--bg);color:var(--t);min-height:100vh;
 <div class="toast" id="toast"></div>
 
 <script>
-// ===== CONFIG =====
+// ===== CONFIG - NO KEYS HERE, ALL VIA API ROUTES =====
 const CFG={
-  SOSO_API:'/api/soso',
-  GROQ_API:'/api/signal',
-  NEWS_API:'/api/news',
-  SODEX_API:'/api/sodex',
-  GROQ_KEY:'gsk_YOUR_GROQ_KEY_HERE',
-  GROQ_URL:'https://api.groq.com/openai/v1/chat/completions',
-  GROQ_MODEL:'llama-3.3-70b-versatile',
+  SOSO:'/api/soso',
+  SIGNAL:'/api/signal',
+  NEWS:'/api/news',
+  SODEX:'/api/sodex',
   USE_FB:true
 };
 
@@ -289,13 +393,14 @@ const CFG={
 const S={
   curA:'BTC',
   prices:{},fg:null,etf:null,ssi:null,news:null,
+  treas:null,stocks:null,sodex:null,
   sigHist:[],lastSig:null,logs:[],
   api:{soso:'load',groq:'load',price:'load'}
 };
 
 // ===== UTILS =====
 const $=id=>document.getElementById(id);
-const fmtP=p=>p>=1000?'$'+p.toLocaleString('en-US',{minFD:2,maxFD:2}):'$'+p.toFixed(4);
+const fmtP=p=>p>=1000?'$'+p.toLocaleString('en-US',{minFD:2,maxFD:2}):'$'+p.toFixed(p>=1?2:4);
 const fmtC=c=>{const s=c>=0?'+':'';return`${s}${c.toFixed(2)}%`};
 const ago=d=>{const s=Math.floor((Date.now()-d)/1000);if(s<60)return s+'s ago';if(s<3600)return Math.floor(s/60)+'m ago';if(s<86400)return Math.floor(s/3600)+'h ago';return Math.floor(s/86400)+'d ago'};
 const tsHTML=d=>{const s=Math.floor((Date.now()-d)/1000);let cl='f';if(s>300)cl='s';if(s>600)cl='o';return`<span class="td ${cl}"></span>Updated ${ago(d)} &#183; Source: SoSoValue API`};
@@ -325,11 +430,11 @@ function setApi(s,st,msg=''){
 // ===== FALLBACK DATA =====
 const FB={
   prices:{
-    BTC:{spot:77115,sodex:84250,ch:1.76,vol:'1.2M',src:'CoinGecko/SoDEX',sv:'1.2M',lu:Date.now()},
-    ETH:{spot:2284.14,sodex:2391.50,ch:1.57,vol:'892K',src:'CoinGecko/SoDEX',sv:'892K',lu:Date.now()},
-    SOL:{spot:84.01,sodex:88.47,ch:1.32,vol:'445K',src:'CoinGecko/SoDEX',sv:'445K',lu:Date.now()},
-    BNB:{spot:643.10,sodex:643.10,ch:1.01,vol:'235K',src:'CoinGecko/SoDEX',sv:'235K',lu:Date.now()},
-    SOSO:{sodex:0.432,ch:6.60,sv:'1.0M',src:'SoDEX',lu:Date.now()}
+    BTC:{spot:77115,sodex:84250,ch:1.76,vol:'1.2M',sv:'1.2M',lu:Date.now()},
+    ETH:{spot:2284.14,sodex:2391.50,ch:1.57,vol:'892K',sv:'892K',lu:Date.now()},
+    SOL:{spot:84.01,sodex:88.47,ch:1.32,vol:'445K',sv:'445K',lu:Date.now()},
+    BNB:{spot:643.10,sodex:643.10,ch:1.01,vol:'235K',sv:'235K',lu:Date.now()},
+    SOSO:{sodex:0.432,ch:6.60,sv:'1.0M',lu:Date.now()}
   },
   fg:{v:26,cls:'FEAR',ts:Date.now()-3600000},
   etf:[
@@ -346,58 +451,46 @@ const FB={
   news:[
     {cat:'MARKETS',tt:"Bitcoin's surge pressures shorts, but absent spot and long leverage caps rallies",src:'CoinTelegraph',tm:Date.now()-3600000,an:'NEUTRAL signal. Price surge to $77K is putting pressure on short sellers, but lack of spot buying and limited long leverage may cap the rally.',ok:true},
     {cat:'MARKETS',tt:'BlackRock Bitcoin ETF sees record $312M daily inflow amid institutional accumulation',src:'CoinTelegraph',tm:Date.now()-7200000,an:'BULLISH signal. Institutional flows remain strong. IBIT inflows 2.3&#963; above 30-day average.',ok:true}
+  ],
+  treas:{
+    companies:42,weeklyInflow:2540000000,
+    list:[
+      {name:'MicroStrategy',btc:499226},{name:'Marathon Digital',btc:47531},{name:'Riot Platforms',btc:19223},
+      {name:'Tesla',btc:11509},{name:'Galaxy Digital',btc:8100},{name:'Coinbase',btc:9480}
+    ]
+  },
+  stocks:[
+    {tick:'MSTR',ex:'NYSE/NASDAQ',p:1840.5,ch:3.2},{tick:'COIN',ex:'NYSE/NASDAQ',p:218.3,ch:2.8},
+    {tick:'MARA',ex:'NYSE/NASDAQ',p:18.9,ch:4.1},{tick:'RIOT',ex:'NYSE/NASDAQ',p:11.2,ch:3.5},{tick:'CLSK',ex:'NYSE/NASDAQ',p:12.4,ch:2.9}
+  ],
+  sodex:[
+    {pair:'BTC/USDC',p:84250,ch:2.41,vol:'$1.2M'},{pair:'ETH/USDC',p:2391.5,ch:3.05,vol:'$892K'},
+    {pair:'SOSO/USDC',p:0.432,ch:6.60,vol:'$1.0M'},{pair:'SOL/USDC',p:88.47,ch:3.17,vol:'$445K'},
+    {pair:'BNB/USDC',p:643.1,ch:1.01,vol:'$235K'}
   ]
 };
 
 // ===== API CALLS =====
-async function apiSosoPrices(){
-  try{
-    addLog('Fetching SoSoValue market data...','inf');
-    const r=await fetch(CFG.SOSO_API+'/prices');
-    if(!r.ok)throw new Error('HTTP '+r.status);
-    const d=await r.json();
-    setApi('soso','ok');setApi('price','ok');
-    addLog('SoSoValue prices loaded','ok');return d;
-  }catch(e){addLog('SoSoValue prices failed: '+e.message,'er');setApi('price','fall');return null;}
+async function apiSoso(type,params=''){
+  try{const r=await fetch(`${CFG.SOSO}?type=${type}${params}`);if(!r.ok)throw new Error('HTTP '+r.status);return await r.json();}
+  catch(e){addLog(`SoSoValue ${type} failed: ${e.message}`,'er');return null;}
 }
-async function apiSosoETF(){
+async function apiSignal(prompt){
   try{
-    addLog('Fetching ETF flows...','inf');
-    const r=await fetch(CFG.SOSO_API+'/etf-flows');
-    if(!r.ok)throw new Error('HTTP '+r.status);
-    const d=await r.json();
-    setApi('soso','ok');addLog('ETF flows loaded','ok');return d;
-  }catch(e){addLog('ETF API failed: '+e.message,'er');setApi('soso','fall');return null;}
+    const r=await fetch(CFG.SIGNAL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt})});
+    if(!r.ok)throw new Error('HTTP '+r.status);const d=await r.json();return d.result||d;
+  }catch(e){addLog('Signal API failed: '+e.message,'er');return null;}
 }
-async function apiSosoSSI(){
-  try{
-    addLog('Fetching SSI Indexes...','inf');
-    const r=await fetch(CFG.SOSO_API+'/ssi');
-    if(!r.ok)throw new Error('HTTP '+r.status);
-    const d=await r.json();addLog('SSI loaded','ok');return d;
-  }catch(e){addLog('SSI failed: '+e.message,'wn');return null;}
+async function apiNews(){try{const r=await fetch(CFG.NEWS);if(!r.ok)throw new Error('HTTP '+r.status);return await r.json();}catch(e){addLog('News failed: '+e.message,'er');return null;}}
+async function apiSodex(){try{const r=await fetch(`${CFG.SODEX}?type=tickers`);if(!r.ok)throw new Error('HTTP '+r.status);return await r.json();}catch(e){addLog('SoDEX failed: '+e.message,'er');return null;}}
+async function apiFG(){
+  try{const r=await fetch('https://api.alternative.me/fng/');if(!r.ok)throw new Error('HTTP '+r.status);const d=await r.json();const v=parseInt(d.data[0].value);
+    let cls='NEUTRAL';if(v<=20)cls='EXTREME FEAR';else if(v<=40)cls='FEAR';else if(v<=60)cls='NEUTRAL';else if(v<=80)cls='GREED';else cls='EXTREME GREED';
+    return{v,cls,ts:Date.now()};
+  }catch(e){addLog('F&G failed: '+e.message,'er');return FB.fg;}
 }
-async function apiSosoNews(){
-  try{
-    addLog('Fetching news...','inf');
-    const r=await fetch(CFG.NEWS_API);
-    if(!r.ok)throw new Error('HTTP '+r.status);
-    const d=await r.json();addLog(`Loaded ${d.length||0} news items`,'ok');return d;
-  }catch(e){addLog('News failed: '+e.message,'wn');return null;}
-}
-async function apiGroq(a,md){
-  try{
-    addLog(`Generating ${a} signal via Groq...`,'inf');
-    const prompt=`Analyze ${a} market data and return STRICT JSON:\nPrice: $${md.price||'N/A'}, Change: ${md.ch||'N/A'}%, Fear: ${S.fg?.v||'N/A'}/100, ETF: +$${((S.etf?.reduce((a,b)=>a+b.f,0)||0)/1e6).toFixed(1)}M\n\nReturn: {signal:"BUY/SELL/HOLD/NEUTRAL",confidence:0-100,reasoning:"2-3 sentences",risk:"LOW/MED/HIGH",timeframe:"3-7 days",factors:["f1","f2","f3"],risks:["r1","r2"],contrarian:"why wrong"}`;
-    const r=await fetch(CFG.GROQ_URL,{
-      method:'POST',headers:{'Authorization':'Bearer '+CFG.GROQ_KEY,'Content-Type':'application/json'},
-      body:JSON.stringify({model:CFG.GROQ_MODEL,messages:[{role:'system',content:'Crypto analyst. Valid JSON only.'},{role:'user',content:prompt}],temperature:0.3,max_tokens:800,response_format:{type:'json_object'}})
-    });
-    if(!r.ok)throw new Error('HTTP '+r.status);
-    const d=await r.json();const c=JSON.parse(d.choices[0].message.content);
-    setApi('groq','ok');addLog(`Groq: ${c.signal} (${c.confidence}%)`,'ok');return c;
-  }catch(e){addLog('Groq failed: '+e.message,'er');setApi('groq','fall');return localSig(a,md);}
-}
+
+// ===== LOCAL SIGNAL ENGINE =====
 function localSig(a,md){
   addLog('Using local engine (Groq unavailable)','wn');
   const p=md.price||0,c=md.ch||0,fg=S.fg?.v||50,et=S.etf?.reduce((a,b)=>a+b.f,0)||0;
@@ -408,18 +501,8 @@ function localSig(a,md){
   else{sig='NEUTRAL';conf=45;reason=`Mixed signals: Fear ${fg}/100, change ${c}%. Wait for clarity.`;risk='MED';}
   return{signal:sig,confidence:conf,reasoning:reason,risk_level:risk,timeframe:'3-7 days',factors:[`Fear: ${fg}/100`,`ETF: +$${(et/1e6).toFixed(1)}M`,`Change: ${c}%`],risks:['Local engine only','Limited context'],contrarian:'Macro shifts (rates, regs) may invalidate quickly.'};
 }
-async function apiFG(){
-  try{
-    addLog('Fetching Fear & Greed...','inf');
-    const r=await fetch('https://api.alternative.me/fng/');
-    if(!r.ok)throw new Error('HTTP '+r.status);
-    const d=await r.json();const v=parseInt(d.data[0].value);
-    let cls='NEUTRAL';if(v<=20)cls='EXTREME FEAR';else if(v<=40)cls='FEAR';else if(v<=60)cls='NEUTRAL';else if(v<=80)cls='GREED';else cls='EXTREME GREED';
-    addLog(`F&G: ${v}/100 (${cls})`,'ok');return{v,cls,ts:Date.now()};
-  }catch(e){addLog('F&G failed: '+e.message,'er');return FB.fg;}
-}
 
-// ===== RENDER =====
+// ===== RENDER FUNCTIONS =====
 function renderPrices(){
   const g=$('priceGrid'),pr=S.prices;
   const assets=[{s:'BTC',n:'BTC/USD',t:'spot',k:'BTC'},{s:'ETH',n:'ETH/USD',t:'spot',k:'ETH'},{s:'SOL',n:'SOL/USD',t:'spot',k:'SOL'},{s:'SOSO',n:'SOSO/USDC',t:'sodex',k:'SOSO'}];
@@ -443,12 +526,30 @@ function renderETF(){
   box.innerHTML+=`<div class="etftot"><span class="etftl">Total Net</span><span class="etftv ${tcl}">${tsg}$${tm}M</span></div>`;
   $('etfTs').innerHTML=tsHTML(Date.now())+' &#183; SoSoValue API';
 }
+function renderTreas(){
+  const t=S.treas||FB.treas;
+  $('treasGrid').innerHTML=`<div class="treas-card"><div class="treas-l">COMPANIES</div><div class="treas-v">${t.companies}</div></div><div class="treas-card"><div class="treas-l">WEEKLY INFLOW</div><div class="treas-v">$${(t.weeklyInflow/1e9).toFixed(2)}B</div></div>`;
+  $('treasList').innerHTML=t.list.map(x=>`<div class="treas-item"><span class="treas-name">${x.name}</span><span class="treas-amt">${x.btc.toLocaleString()} BTC</span></div>`).join('');
+}
+function renderStocks(){
+  const s=S.stocks||FB.stocks;
+  $('stockCard').innerHTML=s.map(x=>{
+    const cl=x.ch>0?'up':'dn';
+    return`<div class="stock-item"><div class="stock-info"><span class="stock-tick">${x.tick}</span><span class="stock-ex">${x.ex}</span></div><div class="stock-price"><span class="stock-p">$${x.p}</span><span class="stock-ch ${cl}">${fmtC(x.ch)}</span></div></div>`;
+  }).join('');
+}
+function renderSodex(){
+  const s=S.sodex||FB.sodex;
+  $('sodexList').innerHTML=s.map(x=>{
+    const cl=x.ch>0?'up':'dn';
+    return`<div class="sodex-item"><div><div class="sodex-pair">${x.pair}</div><div class="sodex-vol">VOL ${x.vol}</div></div><div class="sodex-price"><span class="sodex-p">${fmtP(x.p)}</span><span class="sodex-ch ${cl}">${fmtC(x.ch)}</span></div></div>`;
+  }).join('');
+}
 function renderSig(sd){
   const v=$('sigVerdict'),r=$('sigReason'),cb=$('confBar'),cv=$('confVal'),rk=$('sigRisk'),tf=$('sigTime'),gn=$('sigGen');
   v.textContent=sd.signal;v.className='sig-v v'+sd.signal.toLowerCase()[0];
   r.innerHTML=sd.reasoning;cb.style.width=sd.confidence+'%';cv.textContent=sd.confidence+'%';
   rk.textContent=sd.risk_level;tf.textContent=sd.timeframe;gn.textContent=new Date().toLocaleTimeString('en-US',{hour12:true,hour:'2-digit',minute:'2-digit'});
-  // Audit
   $('auditData').innerHTML=sd.factors.map(f=>`<div class="audit-i"><span class="audit-bul">&#8226;</span><div class="audit-tx">${f}<div class="audit-src">Source: OnchainEdge Data Layer</div></div></div>`).join('');
   $('auditReason').innerHTML=`<div class="audit-i"><span class="audit-bul">&#9654;</span><div class="audit-tx">${sd.reasoning}<div class="audit-src">Engine: ${S.api.groq==='ok'?'Groq AI (LLM)':'Local Rule Engine'}</div></div></div>`;
   $('auditRisk').innerHTML=sd.risks.map(r=>`<div class="audit-i"><span class="audit-bul">&#9888;</span><div class="audit-tx">${r}</div></div>`).join('')+`<div class="audit-i"><span class="audit-bul">?</span><div class="audit-tx"><strong>Contrarian Check:</strong> ${sd.contrarian}</div></div>`;
@@ -471,74 +572,154 @@ function renderHist(){
   const b=$('histBody');
   if(S.sigHist.length===0){b.innerHTML='';return;}
   b.innerHTML=S.sigHist.slice(-10).reverse().map(h=>{
-    const cl=h.sig==='BUY'?'up':h.sig==='SELL'?'dn':'nu',ok=h.res>0,ico=ok?'&#10003;':'&#10007;',iccl=ok?'hist-ok':'hist-no';
-    return`<tr><td class="hist-tok">${h.a}</td><td class="hist-sig ${cl}">${h.sig}</td><td class="hist-res"><span class="${iccl}">${ico}</span> ${h.res>0?'+':''}${h.res.toFixed(1)}%</td><td class="hist-tm">${ago(h.ts)}</td></tr>`;
+    const cl=h.sig==='BUY'?'up':h.sig==='SELL'?'dn':'nu',ok=h.res&&h.res>0,ico=ok?'&#10003;':'&#10007;',iccl=ok?'hist-ok':'hist-no';
+    return`<tr><td class="hist-tok">${h.a}</td><td class="hist-sig ${cl}">${h.sig}</td><td class="hist-res"><span class="${iccl}">${ico}</span> ${h.res?(h.res>0?'+':'')+h.res.toFixed(1)+'%':'Pending'}</td><td class="hist-tm">${ago(h.ts)}</td></tr>`;
   }).join('');
 }
 
 // ===== ACTIONS =====
 function switchA(a){
-  S.curA=a;
-  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.a===a));
-  $('sigAsset').textContent=a;
-  genSignal();
+  S.curA=a;document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.a===a));
+  $('sigAsset').textContent=a;genSignal();
 }
-function toggleAudit(){
-  const c=$('auditCon'),i=$('auditIco');
-  c.classList.toggle('show');i.classList.toggle('open');
-}
+function toggleAudit(){const c=$('auditCon'),i=$('auditIco');c.classList.toggle('show');i.classList.toggle('open');}
+
 async function genSignal(){
   const a=S.curA,md=S.prices[a]||FB.prices[a];
   $('sigVerdict').textContent='ANALYZING...';$('sigVerdict').className='sig-v vn';
   $('sigReason').textContent='Fetching market data and generating analysis...';
-  const sd=await apiGroq(a,md);
+
+  let sd=null;
+  // Try Groq via your API
+  try{
+    addLog(`Generating ${a} signal via Groq...`,'inf');
+    const prompt=`Analyze ${a} market data and return STRICT JSON:\nPrice: $${md.spot||md.sodex||'N/A'}, Change: ${md.ch||'N/A'}%, Fear: ${S.fg?.v||'N/A'}/100, ETF: +$${((S.etf?.reduce((a,b)=>a+b.f,0)||0)/1e6).toFixed(1)}M\n\nReturn: {signal:"BUY/SELL/HOLD/NEUTRAL",confidence:0-100,reasoning:"2-3 sentences",risk:"LOW/MED/HIGH",timeframe:"3-7 days",factors:["f1","f2","f3"],risks:["r1","r2"],contrarian:"why wrong"}`;
+    const result=await apiSignal(prompt);
+    if(result){
+      try{
+        const parsed=typeof result==='string'?JSON.parse(result):result;
+        if(parsed.signal){sd=parsed;setApi('groq','ok');addLog(`Groq: ${sd.signal} (${sd.confidence}%)`,'ok');}
+      }catch(e){}
+    }
+  }catch(e){}
+
+  if(!sd){sd=localSig(a,md);}
+
   S.lastSig={a,sig:sd.signal,conf:sd.confidence,ts:Date.now(),res:0};
   S.sigHist.push(S.lastSig);
   renderSig(sd);renderHist();
   toast(`${a} Signal: ${sd.signal} (${sd.confidence}%)`,sd.signal==='BUY'?'ok':sd.signal==='SELL'?'er':'ok');
 }
+
 async function refreshAll(){
   addLog('Refreshing all data...','inf');
-  // Prices
-  const p=await apiSosoPrices();if(p)S.prices=p;else S.prices=FB.prices;
+  // Prices from SoSoValue
+  const p=await apiSoso('currency','&id=BTC');
+  if(p&&p.ok){S.prices.BTC={spot:p.data?.price||77115,sodex:84250,ch:p.data?.change_24h||1.76,vol:'1.2M',sv:'1.2M',lu:Date.now()};setApi('price','ok');}
+  else{S.prices=FB.prices;setApi('price','fall');}
+
+  const eth=await apiSoso('currency','&id=ETH');
+  if(eth&&eth.ok)S.prices.ETH={spot:eth.data?.price||2284,sodex:2391.50,ch:eth.data?.change_24h||1.57,vol:'892K',sv:'892K',lu:Date.now()};
+
   renderPrices();
+
   // Fear & Greed
   S.fg=await apiFG();renderFG();
+
   // ETF
-  const e=await apiSosoETF();if(e)S.etf=e;else S.etf=FB.etf;
+  const e=await apiSoso('etf-flows');
+  if(e&&e.ok){S.etf=e.data||FB.etf;setApi('soso','ok');}
+  else{S.etf=FB.etf;setApi('soso','fall');}
   renderETF();
+
+  // Treasury
+  const tr=await apiSoso('treasury');
+  if(tr&&tr.ok)S.treas=tr.data;
+  else S.treas=FB.treas;
+  renderTreas();
+
+  // Stocks
+  const st=await apiSoso('crypto-stocks');
+  if(st&&st.ok)S.stocks=st.data;
+  else S.stocks=FB.stocks;
+  renderStocks();
+
   // SSI
-  const s=await apiSosoSSI();if(s)S.ssi=s;else S.ssi=FB.ssi;
+  const s=await apiSoso('sector');
+  if(s&&s.ok)S.ssi=s.data||FB.ssi;
+  else S.ssi=FB.ssi;
   renderSSI();
+
+  // SoDEX
+  await refreshSodex();
+
   // News
-  const n=await apiSosoNews();if(n)S.news=n;else S.news=FB.news;
-  renderNews();
+  await refreshNews();
+
   // Signal
   await genSignal();
+
   toast('All data refreshed','ok');
 }
+
+async function refreshSodex(){
+  const d=await apiSodex();
+  if(d&&d.ok){S.sodex=d.data||FB.sodex;}
+  else if(d&&d.fallback){S.sodex=d.data||FB.sodex;}
+  else{S.sodex=FB.sodex;}
+  renderSodex();
+}
+
 async function refreshNews(){
-  const n=await apiSosoNews();if(n)S.news=n;renderNews();toast('News refreshed','ok');
+  const n=await apiNews();
+  if(n&&n.items){S.news=n.items.map(x=>({cat:'MARKETS',tt:x.title,src:x.source,tm:x.published_on*1000,an:null,ok:false}));}
+  else{S.news=FB.news;}
+  renderNews();toast('News refreshed','ok');
+}
+
+// ===== AI CHAT =====
+async function sendChat(){
+  const input=$('chatInput'),btn=$('chatBtn'),msg=input.value.trim();
+  if(!msg)return;
+
+  // Add user message
+  const box=$('chatMessages');
+  const userDiv=document.createElement('div');
+  userDiv.className='chat-msg user';
+  userDiv.textContent=msg;
+  box.appendChild(userDiv);
+  input.value='';btn.disabled=true;btn.textContent='...';
+  box.scrollTop=box.scrollHeight;
+
+  // Get AI response
+  try{
+    const prompt=`You are OnchainEdge AI, a crypto market analyst. User asks: "${msg}"\n\nCurrent market context: BTC $${S.prices.BTC?.spot||77115}, Fear & Greed ${S.fg?.v||26}/100, ETF net +$${((S.etf?.reduce((a,b)=>a+b.f,0)||0)/1e6).toFixed(1)}M.\n\nGive a concise, data-driven answer in 2-3 sentences. Mention specific numbers.`;
+    const result=await apiSignal(prompt);
+
+    const aiDiv=document.createElement('div');
+    aiDiv.className='chat-msg ai';
+    aiDiv.innerHTML=result||'I apologize, but I am unable to analyze that request at the moment. Please try asking about BTC, ETH, or market sentiment.';
+    box.appendChild(aiDiv);
+  }catch(e){
+    const aiDiv=document.createElement('div');
+    aiDiv.className='chat-msg ai';
+    aiDiv.textContent='AI service temporarily unavailable. Please check the system log for details.';
+    box.appendChild(aiDiv);
+  }
+
+  btn.disabled=false;btn.textContent='Send';
+  box.scrollTop=box.scrollHeight;
 }
 
 // ===== INIT =====
 function init(){
-  // UTC clock
   setInterval(()=>{
     const now=new Date();
     $('utcTime').textContent=now.toISOString().split('T')[1].split('.')[0]+' UTC';
   },1000);
-  // Load all
   refreshAll();
 }
 init();
 </script>
 </body>
-</html>'''
-
-with open(output_path, 'w', encoding='utf-8') as f:
-    f.write(html)
-
-size = os.path.getsize(output_path)
-print(f"✅ Built successfully: {output_path}")
-print(f"📦 File size: {size:,} bytes ({size/1024:.1f} KB)")
+</html>
