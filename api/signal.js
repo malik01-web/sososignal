@@ -1,42 +1,39 @@
 export default async function handler(req, res) {
-  // CORS
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-
-  const GROQ_KEY = process.env.GROQ_API_KEY;
-  if (!GROQ_KEY) return res.status(500).json({ error: 'Groq key not configured' });
+  if (req.method !== 'POST') return res.status(405).end();
+  
+  const { prompt } = req.body;
+  if (!prompt) return res.status(400).json({ error: 'Prompt is required' });
 
   try {
-    const { prompt } = req.body;
-    if (!prompt) return res.status(400).json({ error: 'No prompt provided' });
-
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + GROQ_KEY
+        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
-        max_tokens: 400,
-        temperature: 0.3,
-        messages: [{ role: 'user', content: prompt }]
+        model: 'llama3-8b-8192', // Active fast Groq model
+        messages: [
+            { 
+                role: 'system', 
+                // System prompt ensures the output doesn't break your UI parser
+                content: 'You are OnchainEdge AI. Return ONLY a strict JSON object. Do not wrap in markdown blocks. No conversational text.' 
+            },
+            { role: 'user', content: prompt }
+        ],
+        // Forces the LLM to output valid JSON matching your frontend's requirements
+        response_format: { type: "json_object" }, 
+        temperature: 0.2 // Lowered temperature for consistent, analytical responses
       })
     });
 
-    if (!response.ok) {
-      const err = await response.text();
-      return res.status(response.status).json({ error: err });
-    }
-
+    if (!response.ok) throw new Error(`Groq API returned ${response.status}`);
+    
     const data = await response.json();
-    const text = data.choices?.[0]?.message?.content || '';
-    return res.status(200).json({ result: text });
-
-  } catch (e) {
-    return res.status(500).json({ error: e.message });
+    const result = data.choices[0].message.content;
+    
+    res.status(200).json({ result });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 }
