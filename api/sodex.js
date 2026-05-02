@@ -1,15 +1,14 @@
 export default async function handler(req, res) {
-  const { type } = req.query; // Frontend requests ?type=tickers
-  
-  // Appending the path to the base REST URL
-  const endpoint = type || 'tickers';
-  const sodexUrl = `https://mainnet-gw.sodex.dev/api/v1/spot/${endpoint}`;
+  // Stripped back exactly to what the whitepaper showed
+  const sodexUrl = 'https://mainnet-gw.sodex.dev/api/v1/spot';
   
   try {
     const response = await fetch(sodexUrl);
     
     if (!response.ok) {
-        return res.status(response.status).json({ error: `SoDEX error ${response.status}` });
+        const errorText = await response.text();
+        console.error(`SoDEX Error (${response.status}):`, errorText);
+        return res.status(response.status).json({ error: `SoDEX Error: ${errorText}` });
     }
     
     const data = await response.json();
