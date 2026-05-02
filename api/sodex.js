@@ -1,14 +1,18 @@
 export default async function handler(req, res) {
-  // Official SoDEX Mainnet REST Endpoint for Spot Markets
-  const sodexUrl = 'https://mainnet-gw.sodex.dev/api/v1/spot';
+  const { type } = req.query; // Frontend requests ?type=tickers
+  
+  // Appending the path to the base REST URL
+  const endpoint = type || 'tickers';
+  const sodexUrl = `https://mainnet-gw.sodex.dev/api/v1/spot/${endpoint}`;
   
   try {
     const response = await fetch(sodexUrl);
-    if (!response.ok) throw new Error(`SoDEX API returned ${response.status}`);
+    
+    if (!response.ok) {
+        return res.status(response.status).json({ error: `SoDEX error ${response.status}` });
+    }
     
     const data = await response.json();
-    
-    // Cache for 30 seconds to keep live markets responsive but safe
     res.setHeader('Cache-Control', 's-maxage=30, stale-while-revalidate');
     res.status(200).json(data);
   } catch (error) {
