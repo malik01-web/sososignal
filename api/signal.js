@@ -1,7 +1,8 @@
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
+  
   const { prompt } = req.body;
-
+  
   try {
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
@@ -10,18 +11,22 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'llama3-8b-8192',
+        // Switched to a highly stable model
+        model: 'mixtral-8x7b-32768', 
         messages: [
-            { role: 'system', content: 'You are OnchainEdge AI. Return ONLY a strict JSON object. Do not wrap in markdown blocks. No conversational text.' },
+            { role: 'system', content: 'You are an AI data parser. Output JSON ONLY. Do not use markdown wrappers. Ensure it is valid JSON.' },
             { role: 'user', content: prompt }
         ],
-        response_format: { type: "json_object" }, 
+        // Removed strict JSON formatting to prevent 400 crashes if Groq misinterprets the payload
         temperature: 0.2
       })
     });
 
     if (!response.ok) {
-        return res.status(response.status).json({ error: `Groq error ${response.status}` });
+        // This will print EXACTLY why Groq is rejecting the request
+        const errorText = await response.text();
+        console.error(`Groq API Error (${response.status}):`, errorText);
+        return res.status(response.status).json({ error: errorText });
     }
     
     const data = await response.json();
